@@ -63,7 +63,7 @@ public class LibraryApp {
                 case 9:
                     viewBookRatings();
                     break;
-                case 10:
+                default:
                     System.out.println("Thank you for visiting!");
                     return;
             }
@@ -145,6 +145,25 @@ public class LibraryApp {
         List<String> reviews = book.getAllReviews();
         for (int i = 0; i < reviews.size(); i++) {
             System.out.println((i + 1) + ". " + reviews.get(i));
+        }
+    }
+
+   private void listBorrowedBooks() {
+        List<Book> borrowedBooks = library.getBorrowedBooks();
+        if (borrowedBooks.isEmpty()) {
+            System.out.println("There are no borrowed books.");
+            return;
+        }
+        
+        System.out.println("\nBorrowed books:");
+        for (int i = 0; i < borrowedBooks.size(); i++) {
+            Book book = borrowedBooks.get(i);
+            System.out.printf("%d. %s - %s (ISBN: %s)\n", 
+                i + 1, 
+                book.getTitle(), 
+                book.getAuthor(),
+                book.getIsbn()
+            );
         }
     }
 
