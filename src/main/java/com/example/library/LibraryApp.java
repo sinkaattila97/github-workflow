@@ -49,10 +49,23 @@ public class LibraryApp {
                     addNewBook();
                     break;
                 case 5:
+                    borrowBook();
+                    break;
+                case 6:
+                    returnBook();
+                    break;
+                case 7:
+                    listBorrowedBooks();
+                    break;
+                case 8:
+                    rateBook();
+                    break;
+                case 9:
+                    viewBookRatings();
+                    break;
+                case 10:
                     System.out.println("Thank you for visiting!");
                     return;
-                default:
-                    System.out.println("Invalid choice!");
             }
             System.out.println();
         }
@@ -64,8 +77,75 @@ public class LibraryApp {
         System.out.println("2. Search by title");
         System.out.println("3. Search by author");
         System.out.println("4. Add a new book");
-        System.out.println("5. Exit");
+        System.out.println("5. Borrow a book");
+        System.out.println("6. Return a book");
+        System.out.println("7. List borrowed books");
+        System.out.println("8. Rate a book");
+        System.out.println("9. View book ratings");
+        System.out.println("10. Exit");
         System.out.print("Your choice: ");
+    }
+
+    private void rateBook() {
+        System.out.print("Enter the ISBN of the book you want to rate: ");
+        String isbn = scanner.nextLine();
+        
+        Book book = library.findBookByIsbn(isbn);
+        if (book == null) {
+            System.out.println("No book found with this ISBN.");
+            return;
+        }
+        
+        System.out.println("Book: " + book.getTitle() + " - " + book.getAuthor());
+        System.out.print("Rating (1-5): ");
+        
+        try {
+            int rating = Integer.parseInt(scanner.nextLine());
+            if (rating < 1 || rating > 5) {
+                System.out.println("The rating must be between 1 and 5!");
+                return;
+            }
+            
+            System.out.print("Review (optional): ");
+            String review = scanner.nextLine();
+            
+            if (book.addRating(rating, review)) {
+                System.out.println("Rating added successfully!");
+            } else {
+                System.out.println("An error occurred while adding the rating.");
+            }
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid rating format!");
+        }
+    }
+
+    private void viewBookRatings() {
+        System.out.print("Enter the ISBN of the book: ");
+        String isbn = scanner.nextLine();
+        
+        Book book = library.findBookByIsbn(isbn);
+        if (book == null) {
+            System.out.println("No book found with this ISBN.");
+            return;
+        }
+        
+        System.out.println("\n=== " + book.getTitle() + " ===");
+        System.out.println("Author: " + book.getAuthor());
+        
+        if (book.getRatingCount() == 0) {
+            System.out.println("This book has no ratings yet.");
+            return;
+        }
+        
+        System.out.printf("Average rating: %.1f/5 (%d ratings)\n", 
+            book.getAverageRating(), book.getRatingCount());
+        
+        System.out.println("\nAll reviews:");
+        List<String> reviews = book.getAllReviews();
+        for (int i = 0; i < reviews.size(); i++) {
+            System.out.println((i + 1) + ". " + reviews.get(i));
+        }
     }
 
     private int getChoice() {
