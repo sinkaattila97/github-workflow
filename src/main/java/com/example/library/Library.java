@@ -75,6 +75,63 @@ public class Library {
     }
 
     /**
+     * Borrow a book by ISBN
+     */
+    public boolean borrowBook(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty()) {
+            return false;
+        }
+        
+        for (Book book : books) {
+            if (book.getIsbn().equals(isbn) && book.isAvailable()) {
+                book.setAvailable(false);
+                return true;
+            }
+        }
+        return false; // Not found or already borrowed
+    }
+
+    /**
+     * Return a book by ISBN
+     */
+    public boolean returnBook(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty()) {
+            return false;
+        }
+        
+        for (Book book : books) {
+            if (book.getIsbn().equals(isbn) && !book.isAvailable()) {
+                book.setAvailable(true);
+                return true;
+            }
+        }
+        return false; // Not found or already available
+    }
+
+    /**
+     * Find a book by ISBN
+     */
+    public Book findBookByIsbn(String isbn) {
+        if (isbn == null || isbn.trim().isEmpty()) {
+            return null;
+        }
+        
+        return books.stream()
+                .filter(book -> book.getIsbn().equals(isbn))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * List of borrowed books
+     */
+    public List<Book> getBorrowedBooks() {
+        return books.stream()
+                .filter(book -> !book.isAvailable())
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Total number of books
      */
     public int getTotalBooksCount() {
