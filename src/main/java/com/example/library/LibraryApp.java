@@ -58,10 +58,14 @@ public class LibraryApp {
                     listBorrowedBooks();
                     break;
                 case 8:
+                    rateBook();
+                    break;
+                case 9:
+                    viewBookRatings();
+                    break;
+                default:
                     System.out.println("Thank you for visiting!");
                     return;
-                default:
-                    System.out.println("Invalid choice!");
             }
             System.out.println();
         }
@@ -76,12 +80,14 @@ public class LibraryApp {
         System.out.println("5. Borrow a book");
         System.out.println("6. Return a book");
         System.out.println("7. List borrowed books");
-        System.out.println("8. Exit");
+        System.out.println("8. Rate a book");
+        System.out.println("9. View book ratings");
+        System.out.println("10. Exit");
         System.out.print("Your choice: ");
     }
 
-    private void borrowBook() {
-        System.out.print("Enter the ISBN of the book you want to borrow: ");
+    private void rateBook() {
+        System.out.print("Enter the ISBN of the book you want to rate: ");
         String isbn = scanner.nextLine();
         
         Book book = library.findBookByIsbn(isbn);
@@ -90,20 +96,32 @@ public class LibraryApp {
             return;
         }
         
-        if (!book.isAvailable()) {
-            System.out.println("The book is already borrowed.");
-            return;
-        }
+        System.out.println("Book: " + book.getTitle() + " - " + book.getAuthor());
+        System.out.print("Rating (1-5): ");
         
-        if (library.borrowBook(isbn)) {
-            System.out.println("Book successfully borrowed: " + book.getTitle());
-        } else {
-            System.out.println("An error occurred during borrowing.");
+        try {
+            int rating = Integer.parseInt(scanner.nextLine());
+            if (rating < 1 || rating > 5) {
+                System.out.println("The rating must be between 1 and 5!");
+                return;
+            }
+            
+            System.out.print("Review (optional): ");
+            String review = scanner.nextLine();
+            
+            if (book.addRating(rating, review)) {
+                System.out.println("Rating added successfully!");
+            } else {
+                System.out.println("An error occurred while adding the rating.");
+            }
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid rating format!");
         }
     }
 
-    private void returnBook() {
-        System.out.print("Enter the ISBN of the book you want to return: ");
+    private void viewBookRatings() {
+        System.out.print("Enter the ISBN of the book: ");
         String isbn = scanner.nextLine();
         
         Book book = library.findBookByIsbn(isbn);
@@ -112,22 +130,28 @@ public class LibraryApp {
             return;
         }
         
-        if (book.isAvailable()) {
-            System.out.println("This book is already available.");
+        System.out.println("\n=== " + book.getTitle() + " ===");
+        System.out.println("Author: " + book.getAuthor());
+        
+        if (book.getRatingCount() == 0) {
+            System.out.println("This book has no ratings yet.");
             return;
         }
         
-        if (library.returnBook(isbn)) {
-            System.out.println("Book successfully returned: " + book.getTitle());
-        } else {
-            System.out.println("An error occurred during return.");
+        System.out.printf("Average rating: %.1f/5 (%d ratings)\n", 
+            book.getAverageRating(), book.getRatingCount());
+        
+        System.out.println("\nAll reviews:");
+        List<String> reviews = book.getAllReviews();
+        for (int i = 0; i < reviews.size(); i++) {
+            System.out.println((i + 1) + ". " + reviews.get(i));
         }
     }
 
-    private void listBorrowedBooks() {
+   private void listBorrowedBooks() {
         List<Book> borrowedBooks = library.getBorrowedBooks();
         if (borrowedBooks.isEmpty()) {
-            System.out.println("There are currently no borrowed books.");
+            System.out.println("There are no borrowed books.");
             return;
         }
         
