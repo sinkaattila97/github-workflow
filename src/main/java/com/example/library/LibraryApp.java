@@ -26,7 +26,7 @@ public class LibraryApp {
     }
 
     public void run() {
-        System.out.println("Welcome to the " + library.getName() + "!");
+        System.out.println("Welcome to the " + library.getName() + " - Book Borrowing System!");
         System.out.println("Total books: " + library.getTotalBooksCount());
         System.out.println("Available books: " + library.getAvailableBooksCount());
         System.out.println();
@@ -49,6 +49,15 @@ public class LibraryApp {
                     addNewBook();
                     break;
                 case 5:
+                    borrowBook();
+                    break;
+                case 6:
+                    returnBook();
+                    break;
+                case 7:
+                    listBorrowedBooks();
+                    break;
+                case 8:
                     System.out.println("Thank you for visiting!");
                     return;
                 default:
@@ -64,8 +73,74 @@ public class LibraryApp {
         System.out.println("2. Search by title");
         System.out.println("3. Search by author");
         System.out.println("4. Add a new book");
-        System.out.println("5. Exit");
+        System.out.println("5. Borrow a book");
+        System.out.println("6. Return a book");
+        System.out.println("7. List borrowed books");
+        System.out.println("8. Exit");
         System.out.print("Your choice: ");
+    }
+
+    private void borrowBook() {
+        System.out.print("Enter the ISBN of the book you want to borrow: ");
+        String isbn = scanner.nextLine();
+        
+        Book book = library.findBookByIsbn(isbn);
+        if (book == null) {
+            System.out.println("No book found with this ISBN.");
+            return;
+        }
+        
+        if (!book.isAvailable()) {
+            System.out.println("The book is already borrowed.");
+            return;
+        }
+        
+        if (library.borrowBook(isbn)) {
+            System.out.println("Book successfully borrowed: " + book.getTitle());
+        } else {
+            System.out.println("An error occurred during borrowing.");
+        }
+    }
+
+    private void returnBook() {
+        System.out.print("Enter the ISBN of the book you want to return: ");
+        String isbn = scanner.nextLine();
+        
+        Book book = library.findBookByIsbn(isbn);
+        if (book == null) {
+            System.out.println("No book found with this ISBN.");
+            return;
+        }
+        
+        if (book.isAvailable()) {
+            System.out.println("This book is already available.");
+            return;
+        }
+        
+        if (library.returnBook(isbn)) {
+            System.out.println("Book successfully returned: " + book.getTitle());
+        } else {
+            System.out.println("An error occurred during return.");
+        }
+    }
+
+    private void listBorrowedBooks() {
+        List<Book> borrowedBooks = library.getBorrowedBooks();
+        if (borrowedBooks.isEmpty()) {
+            System.out.println("There are currently no borrowed books.");
+            return;
+        }
+        
+        System.out.println("\nBorrowed books:");
+        for (int i = 0; i < borrowedBooks.size(); i++) {
+            Book book = borrowedBooks.get(i);
+            System.out.printf("%d. %s - %s (ISBN: %s)\n", 
+                i + 1, 
+                book.getTitle(), 
+                book.getAuthor(),
+                book.getIsbn()
+            );
+        }
     }
 
     private int getChoice() {
