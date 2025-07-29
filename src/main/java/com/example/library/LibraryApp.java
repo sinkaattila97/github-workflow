@@ -26,7 +26,7 @@ public class LibraryApp {
     }
 
     public void run() {
-        System.out.println("Welcome to the " + library.getName() + "!");
+        System.out.println("Welcome to the " + library.getName() + " - Book Borrowing System!");
         System.out.println("Total books: " + library.getTotalBooksCount());
         System.out.println("Available books: " + library.getAvailableBooksCount());
         System.out.println();
