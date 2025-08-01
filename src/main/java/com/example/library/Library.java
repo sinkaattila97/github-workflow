@@ -66,15 +66,6 @@ public class Library {
     }
 
     /**
-     * Number of available books
-     */
-    public int getAvailableBooksCount() {
-        return (int) books.stream()
-                .filter(Book::isAvailable)
-                .count();
-    }
-
-    /**
      * Borrow a book by ISBN
      */
     public boolean borrowBook(String isbn) {
@@ -129,6 +120,29 @@ public class Library {
         return books.stream()
                 .filter(book -> !book.isAvailable())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Advanced search using BookSearchEngine
+     */
+    public List<Book> advancedSearch(String query) {
+        return BookSearchEngine.search(books, query);
+    }
+
+    /**
+     * Filter books by era
+     */
+    public List<Book> filterBooksByEra(BookSearchEngine.BookEra era) {
+        return BookSearchEngine.filterBooksByEra(books, era);
+    }
+
+    /**
+     * Number of available books
+     */
+    public int getAvailableBooksCount() {
+        return (int) books.stream()
+                .filter(Book::isAvailable)
+                .count();
     }
 
     /**
